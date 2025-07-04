@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StoryWeaver - Your Adventure</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="story-container">
+        <h1>Your Adventure Unfolds</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% if story %}
+            <div class="story-segment">
+                {{ story|safe }}
+            </div>
+            
+            <div class="image-container">
+                {% if visual %}
+                    <img src="{{ visual }}" alt="Story Scene" class="scene-visual" onerror="this.src='/static/placeholder.png';">
+                {% else %}
+                    <img src="/static/placeholder.png" alt="Story Scene" class="scene-visual">
+                {% endif %}
+            </div>
+            
+            <div class="interaction-section">
+                <form method="post" class="user-input-form">
+                    <input type="text" name="user_input" placeholder="What would you like to do?" autocomplete="off">
+                    <button type="submit" class="btn-primary">Continue</button>
+                </form>
+                
+                {% if actions %}
+                    <div class="action-section">
+                        <h2>Available Actions</h2>
+                        <div class="action-buttons">
+                            {% for action in actions %}
+                                <button type="submit" name="action" value="{{ action }}" class="action-button" form="action-form">{{ action }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if moods %}
+                    <div class="mood-section">
+                        <h2>Set the Mood</h2>
+                        <div class="mood-buttons">
+                            {% for mood in moods %}
+                                <button type="submit" name="mood" value="{{ mood }}" class="mood-button" form="mood-form">{{ mood }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <form id="action-form" method="post"></form>
+            <form id="mood-form" method="post"></form>
+            
+            <div class="navigation">
+                <a href="{{ url_for('start') }}" class="btn-secondary">Start New Story</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

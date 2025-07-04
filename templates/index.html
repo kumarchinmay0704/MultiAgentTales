@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Weaver</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-purple: #6C63FF;
+            --secondary-purple: #8B7FFF;
+            --accent-pink: #FF6B6B;
+            --light-pink: #FFE3E3;
+            --dark-purple: #4A4453;
+            --light-purple: #E9E7FF;
+            --matte-white: #F8F9FA;
+            --text-dark: #2D3436;
+            --text-light: #636E72;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: white;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--accent-pink));
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .form-label {
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid var(--light-purple);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: var(--matte-white);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+            background: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-purple), var(--accent-pink));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        .story-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(108, 99, 255, 0.1), rgba(255, 107, 107, 0.1));
+            pointer-events: none;
+        }
+
+        .story-part {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-left: 4px solid var(--primary-purple);
+            background: var(--matte-white);
+            border-radius: 0 15px 15px 0;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-part::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--accent-pink));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .story-part:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .story-part:hover::after {
+            transform: scaleX(1);
+        }
+
+        .story-part h4 {
+            color: var(--primary-purple);
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 6px;
+            background-color: var(--light-purple);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-purple), var(--accent-pink));
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+
+        .status-message {
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(108, 99, 255, 0.1), rgba(255, 107, 107, 0.1));
+            pointer-events: none;
+        }
+
+        .status-message.info {
+            background-color: rgba(108, 99, 255, 0.1);
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+        }
+
+        .status-message.warning {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+        }
+
+        .status-message.error {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+        }
+
+        /* Floating elements animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Story part animations */
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .story-part {
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                margin: 10px;
+            }
+            
+            .story-container {
+                padding: 1.5rem;
+            }
+
+            .story-part {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-purple);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-purple);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-purple);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4 animate__animated animate__fadeIn">Story Weaver</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card animate__animated animate__fadeInUp">
+                    <div class="card-body">
+                        <form id="storyForm">
+                            <div class="mb-4">
+                                <label for="genre" class="form-label">Genre</label>
+                                <select class="form-select" id="genre" name="genre" required>
+                                    <option value="horror">Horror</option>
+                                    <option value="fantasy">Fantasy</option>
+                                    <option value="mystery">Mystery</option>
+                                    <option value="sci-fi">Sci-Fi</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="adventure">Adventure</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="protagonist" class="form-label">Protagonist Name</label>
+                                <input type="text" class="form-control" id="protagonist" name="protagonist" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="antagonist" class="form-label">Antagonist Name</label>
+                                <input type="text" class="form-control" id="antagonist" name="antagonist" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="setting" class="form-label">Setting</label>
+                                <input type="text" class="form-control" id="setting" name="setting" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="num_elements" class="form-label">Number of Story Parts</label>
+                                <input type="number" class="form-control" id="num_elements" name="num_elements" min="1" max="10" value="5">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="ending" class="form-label">Choose Story Ending Type</label>
+                                <select class="form-select" id="ending" name="ending">
+                                    <option value="">Select an ending type...</option>
+                                    <option value="suspense">Suspenseful Ending</option>
+                                    <option value="dramatic">Dramatic Ending</option>
+                                    <option value="happy">Happy Ending</option>
+                                    <option value="tragic">Tragic Ending</option>
+                                    <option value="twist">Plot Twist Ending</option>
+                                    <option value="cliffhanger">Cliffhanger Ending</option>
+                                    <option value="mysterious">Mysterious Ending</option>
+                                    <option value="bittersweet">Bittersweet Ending</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">Generate Story</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="status-message info animate__animated animate__fadeIn" id="statusMessage"></div>
+                
+                <div class="progress-container animate__animated animate__fadeIn" id="progressContainer">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: 0%">0%</div>
+                    </div>
+                    <p class="text-center mt-3" id="progressText">Initializing story generation...</p>
+                </div>
+                
+                <div id="storyContainer" class="story-container animate__animated animate__fadeIn" style="display: none;">
+                    <h2 class="text-center mb-4">Your Story</h2>
+                    <div id="storyContent"></div>
+                </div>
+
+                <div id="imageContainer" class="text-center animate__animated animate__fadeIn" style="display: none; margin-top: 2rem;">
+                    <div class="image-frame mx-auto" style="max-width: 420px; position: relative;">
+                        <div id="imageLoading" style="display:none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 2; border-radius: 24px;">
+                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; margin-top: 40%;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <img id="storyImage" src="" alt="Story Visual" style="width: 100%; border-radius: 24px; box-shadow: 0 0 40px 0 var(--primary-purple), 0 0 0 8px var(--matte-white); border: 4px solid var(--accent-pink); display: none; background: var(--light-purple);">
+                        <div class="image-glow" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 24px; box-shadow: 0 0 60px 10px var(--accent-pink), 0 0 120px 20px var(--primary-purple); pointer-events: none; opacity: 0.5;"></div>
+                    </div>
+                    <div id="imageCaption" class="mt-3" style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primary-purple); font-weight: 600; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(108,99,255,0.08);">Story Visual</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function updateProgress(percent, message) {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressText = document.getElementById('progressText');
+            progressBar.style.width = `${percent}%`;
+            progressBar.textContent = `${percent}%`;
+            progressText.textContent = message;
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = `status-message ${type} animate__animated animate__fadeIn`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+        }
+
+        document.getElementById('storyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const genre = document.getElementById('genre').value;
+            const protagonist = document.getElementById('protagonist').value;
+            const antagonist = document.getElementById('antagonist').value;
+            const setting = document.getElementById('setting').value;
+            const numElements = document.getElementById('num_elements').value;
+            const ending = document.getElementById('ending').value;
+            
+            // Create the prompt
+            const prompt = `Begin a ${genre} story featuring ${protagonist} and ${antagonist} in ${setting}`;
+            
+            // Show progress container
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('storyContainer').style.display = 'none';
+            showStatus('Starting story generation...', 'info');
+            
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        num_elements: parseInt(numElements),
+                        ending: ending
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('Story generated successfully!', 'info');
+                    // Display the image
+                    const imageContainer = document.getElementById('imageContainer');
+                    const storyImage = document.getElementById('storyImage');
+                    const imageLoading = document.getElementById('imageLoading');
+                    imageContainer.style.display = 'block';
+                    storyImage.style.display = 'none';
+                    imageLoading.style.display = 'block';
+                    // Set image src and show when loaded
+                    storyImage.onload = function() {
+                        imageLoading.style.display = 'none';
+                        storyImage.style.display = 'block';
+                    };
+                    storyImage.onerror = function() {
+                        imageLoading.style.display = 'none';
+                        storyImage.style.display = 'block';
+                        storyImage.src = '/static/placeholder.png';
+                    };
+                    storyImage.src = data.image_url;
+                    // Display the story and images
+                    const storyContent = document.getElementById('storyContent');
+                    storyContent.innerHTML = '';
+                    const images = data.images || [];
+                    data.story.forEach((part, index) => {
+                        // Image container
+                        const imageDiv = document.createElement('div');
+                        imageDiv.className = 'text-center mb-3';
+                        imageDiv.style.position = 'relative';
+                        imageDiv.style.maxWidth = '420px';
+                        imageDiv.style.margin = '0 auto';
+                        // Spinner
+                        const spinner = document.createElement('div');
+                        spinner.className = 'spinner-border text-primary';
+                        spinner.style.width = '2.5rem';
+                        spinner.style.height = '2.5rem';
+                        spinner.style.position = 'absolute';
+                        spinner.style.top = '40%';
+                        spinner.style.left = '50%';
+                        spinner.style.transform = 'translate(-50%, -50%)';
+                        spinner.style.display = 'block';
+                        imageDiv.appendChild(spinner);
+                        // Image
+                        const img = document.createElement('img');
+                        img.src = images[index] || '/static/placeholder.png';
+                        img.alt = 'Story Visual';
+                        img.style.width = '100%';
+                        img.style.borderRadius = '24px';
+                        img.style.boxShadow = '0 0 40px 0 var(--primary-purple), 0 0 0 8px var(--matte-white)';
+                        img.style.border = '4px solid var(--accent-pink)';
+                        img.style.background = 'var(--light-purple)';
+                        img.style.display = 'none';
+                        img.onload = function() {
+                            spinner.style.display = 'none';
+                            img.style.display = 'block';
+                        };
+                        img.onerror = function() {
+                            spinner.style.display = 'none';
+                            img.style.display = 'block';
+                            img.src = '/static/placeholder.png';
+                        };
+                        imageDiv.appendChild(img);
+                        // Glow
+                        const glow = document.createElement('div');
+                        glow.className = 'image-glow';
+                        glow.style.position = 'absolute';
+                        glow.style.top = '0';
+                        glow.style.left = '0';
+                        glow.style.width = '100%';
+                        glow.style.height = '100%';
+                        glow.style.borderRadius = '24px';
+                        glow.style.boxShadow = '0 0 60px 10px var(--accent-pink), 0 0 120px 20px var(--primary-purple)';
+                        glow.style.pointerEvents = 'none';
+                        glow.style.opacity = '0.5';
+                        imageDiv.appendChild(glow);
+                        storyContent.appendChild(imageDiv);
+                        // Story part
+                        const storyPart = document.createElement('div');
+                        storyPart.className = 'story-part animate__animated animate__fadeInUp';
+                        storyPart.style.animationDelay = `${index * 0.2}s`;
+                        if (index === data.story.length - 1) {
+                            storyPart.innerHTML = `<h4>Conclusion</h4><p>${part}</p>`;
+                        } else {
+                            storyPart.innerHTML = `<h4>Part ${index + 1}</h4><p>${part}</p>`;
+                        }
+                        storyContent.appendChild(storyPart);
+                    });
+                    document.getElementById('storyContainer').style.display = 'block';
+
+                    // Add Download as PDF button
+                    let pdfBtn = document.getElementById('downloadPdfBtn');
+                    if (!pdfBtn) {
+                        pdfBtn = document.createElement('button');
+                        pdfBtn.id = 'downloadPdfBtn';
+                        pdfBtn.className = 'btn btn-primary mt-4 mb-4';
+                        pdfBtn.innerHTML = '<span id="pdfBtnText">Download as PDF</span> <span id="pdfSpinner" class="spinner-border spinner-border-sm" style="display:none;"></span>';
+                        pdfBtn.type = 'button';
+                        pdfBtn.onclick = async function() {
+                            const pdfBtnText = document.getElementById('pdfBtnText');
+                            const pdfSpinner = document.getElementById('pdfSpinner');
+                            pdfBtnText.textContent = 'Exporting...';
+                            pdfSpinner.style.display = 'inline-block';
+                            pdfBtn.disabled = true;
+                            try {
+                                const response = await fetch('/export_pdf', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        story: data.story,
+                                        images: data.images
+                                    })
+                                });
+                                if (!response.ok) throw new Error('Failed to export PDF');
+                                const blob = await response.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'story.pdf';
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                window.URL.revokeObjectURL(url);
+                            } catch (err) {
+                                alert('PDF export failed. Please try again.');
+                            } finally {
+                                pdfBtnText.textContent = 'Download as PDF';
+                                pdfSpinner.style.display = 'none';
+                                pdfBtn.disabled = false;
+                            }
+                        };
+                        storyContent.parentNode.insertBefore(pdfBtn, storyContent);
+                    } else {
+                        pdfBtn.style.display = 'block';
+                    }
+
+                    // Add Export as PDF (Screenshot) button
+                    let screenshotBtn = document.getElementById('screenshotPdfBtn');
+                    if (!screenshotBtn) {
+                        screenshotBtn = document.createElement('button');
+                        screenshotBtn.id = 'screenshotPdfBtn';
+                        screenshotBtn.className = 'btn btn-secondary mt-2 mb-4 ms-2';
+                        screenshotBtn.innerHTML = 'Export as PDF (What You See)';
+                        screenshotBtn.type = 'button';
+                        screenshotBtn.onclick = async function() {
+                            const storyContainer = document.getElementById('storyContainer');
+                            screenshotBtn.textContent = 'Exporting...';
+                            screenshotBtn.disabled = true;
+                            try {
+                                const canvas = await html2canvas(storyContainer, {useCORS: true, scale: 2});
+                                const imgData = canvas.toDataURL('image/png');
+                                const pdf = new window.jspdf.jsPDF({
+                                    orientation: 'portrait',
+                                    unit: 'pt',
+                                    format: [canvas.width, canvas.height]
+                                });
+                                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                                pdf.save('story_screenshot.pdf');
+                            } catch (err) {
+                                alert('Screenshot PDF export failed.');
+                            } finally {
+                                screenshotBtn.textContent = 'Export as PDF (What You See)';
+                                screenshotBtn.disabled = false;
+                            }
+                        };
+                        storyContent.parentNode.insertBefore(screenshotBtn, storyContent);
+                    } else {
+                        screenshotBtn.style.display = 'block';
+                    }
+                } else {
+                    showStatus(data.error || 'Failed to generate story', 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('progressContainer').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

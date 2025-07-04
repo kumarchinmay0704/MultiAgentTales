@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StoryWeaver - Setup Your Adventure</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="setup-container">
+        <h1>Setup Your Adventure</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('setup') }}" method="post" class="setup-form">
+            <div class="character-section">
+                <h2>Choose Your Characters</h2>
+                <div class="form-group">
+                    <label for="protagonist">Protagonist Name:</label>
+                    <input type="text" id="protagonist" name="protagonist" value="Alex" required>
+                </div>
+                <div class="form-group">
+                    <label for="antagonist">Antagonist Name:</label>
+                    <input type="text" id="antagonist" name="antagonist" value="Morgan" required>
+                </div>
+                <div class="form-group">
+                    <label for="support">Supporting Character Name:</label>
+                    <input type="text" id="support" name="support" value="Jamie" required>
+                </div>
+            </div>
+            
+            <div class="genre-section">
+                <h2>Choose Your Genre</h2>
+                <div class="form-group">
+                    <select name="genre" id="genre" required>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="SciFi">Science Fiction</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Start Adventure</button>
+                <a href="{{ url_for('start') }}" class="btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.querySelector('.setup-form').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            // Disable the submit button to prevent double submission
+            document.querySelector('button[type="submit"]').disabled = true;
+        });
+    </script>
+</body>
+</html> 
